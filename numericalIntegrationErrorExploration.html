@@ -1,0 +1,352 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Investigation of Error in Numerical Approximations</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-18"><meta name="DC.source" content="numericalIntegrationErrorExploration.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Investigation of Error in Numerical Approximations</h1><!--introduction--><pre>In order to examine the rate at which numerical approximations of
+$\int_0^pi \sin(x)\ dx $ converge to the actual value of the integral,
+we are going to generate a scatter plot that shows the relationship
+between error and the number of subintervals.</pre><div><ul><li>name: 	AYUSH ROUT</li><li>email: <a href="mailto:axr6077@rit.edu">axr6077@rit.edu</a></li><li>date: 02/12/2018</li></ul></div><p>end section</p><pre class="codeoutput error">Error using dbstatus
+Error: File: C:\Users\ayush\Downloads\numericalIntegrationErrorExploration.m Line: 130 Column: 1
+Function definitions in a script must appear at the end of the file.
+Move all statements after the "simpsonsrule" function definition to before the first local function definition.
+</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Inititialization</a></li><li><a href="#2">Error Experiment: Trapezoid Rule</a></li><li><a href="#3">A Power Law for Error in the Trapezoid Rule</a></li><li><a href="#4">Error Experiment: Simpson's method</a></li><li><a href="#5">A Power Law for Error in Simpson's method</a></li></ul></div><h2 id="1">Inititialization</h2><pre class="codeinput"><span class="comment">% The first thing we will do is choose the number experiements (trials) to</span>
+<span class="comment">% perform.  Each trial will use a different number of subintervals.</span>
+numTrials = 15;
+
+
+<span class="comment">% Next we create arrays in which to record the outcomes of the trials.</span>
+<span class="comment">% The arrays will be filled with zeros initially.  Those values will be</span>
+<span class="comment">% replaced as we perform the experiments.  Each array will have 1 row with</span>
+<span class="comment">% numTrials entries.</span>
+
+<span class="comment">% In this array we will record the number of subintervals that we use to</span>
+<span class="comment">% make an approximation.</span>
+numSubintervalsTrap = zeros(1, numTrials);  <span class="comment">% an array filled with zeros</span>
+
+<span class="comment">% In this array we will record the magnitude of the error in the</span>
+<span class="comment">% approximation.</span>
+errorMagnitudeTrap = zeros(1, numTrials);   <span class="comment">% an array filled with zeros</span>
+
+<span class="comment">% end section</span>
+</pre><h2 id="2">Error Experiment: Trapezoid Rule</h2><pre class="codeinput"><span class="comment">% In this section we use the Trapezoid Rule to compute approximations of</span>
+<span class="comment">% the integral with different numbers of subintervals.  We record outcomes</span>
+<span class="comment">% in the arrays that we prepared above, and then display the results as a</span>
+<span class="comment">% scatter plot.</span>
+
+<span class="keyword">for</span> k = 1:1:numTrials
+     <span class="comment">% The counter k tells us which trial we're conducting.  The number of</span>
+     <span class="comment">% subintervals increases by 5 with each new trial</span>
+     n = 5*k;
+
+     <span class="comment">% Compute the size of each subinterval</span>
+     Dx = pi/n;
+
+     <span class="comment">% Record the partition points at the endpoints of the subintervals</span>
+     x = 0:Dx:pi;
+
+     <span class="comment">% Calculate the function value at the partition points.  Note that f</span>
+     <span class="comment">% is an array of numbers because x is an array of numbers.</span>
+     f = sin(x);
+
+     <span class="comment">% Assemble the array of coefficients for the Trapezoid Rule</span>
+     c = ones(1, length(f));
+     c(2:end-1) = 2;
+
+     <span class="comment">% Calculate the Trapezoid Rule approximation</span>
+     T = sum(c.*f)*Dx/2;
+
+     <span class="comment">% Now we record the results of trial k in position k of our arrays</span>
+     <span class="comment">% First, record the number of subintervals</span>
+     numSubintervalsTrap(k) = n;
+     <span class="comment">% Next, record the error in trial k</span>
+     errorMagnitudeTrap(k) = abs(2-T);
+<span class="keyword">end</span>
+
+<span class="comment">% Next we generate a scatter plot that shows the relationship between the</span>
+<span class="comment">% number of subintervals, n, and the error in the approximation.</span>
+figure(<span class="string">'Color'</span>,<span class="string">'white'</span>)
+hold <span class="string">on</span>
+    scatter( numSubintervalsTrap, errorMagnitudeTrap, 75, <span class="string">'filled'</span>, <span class="string">'b'</span>)
+
+    title(<span class="string">'Number of subintervals and corresponding absolute error'</span>)
+    xlabel(<span class="string">'Number of subintervals'</span>)
+    ylabel(<span class="string">'Absolute error'</span>)
+
+    grid <span class="string">on</span>
+    grid <span class="string">minor</span>
+
+hold <span class="string">off</span>
+
+<span class="comment">% end section</span>
+</pre><h2 id="3">A Power Law for Error in the Trapezoid Rule</h2><p>Put MATLAB commands here</p><pre class="codeinput">X = log( numSubintervalsTrap );
+Y = log( errorMagnitudeTrap );
+
+m = ( Y(end) - Y(1) )/(X(end) - X(1) );
+s = sprintf(<span class="string">'the slope of the line in the log-log plot is %f'</span>, m');
+
+figure
+hold <span class="string">on</span>
+scatter(X, Y, 75, <span class="string">'filled'</span>, <span class="string">'blue'</span>)
+grid <span class="string">on</span> <span class="comment">%toggles the major grid lines</span>
+grid <span class="string">minor</span> <span class="comment">%toggles the minor grid lines</span>
+title(s)
+xlabel( <span class="string">'log(number of subintervals)'</span> )
+ylabel( <span class="string">'log(absolute error)'</span> )
+hold <span class="string">off</span>
+<span class="comment">% end section</span>
+</pre><h2 id="4">Error Experiment: Simpson's method</h2><p>Put MATLAB commands here</p><pre class="codeinput">numTrials = 15;
+numSubintervalsSimp = zeros(1, numTrials);
+errorMagnitudeSimp = zeros(1, numTrials);
+
+<span class="keyword">function</span> integral = simpsonsrule(f,a,b,n)
+h = (b-a)/n;
+x = linspace(a,b,n);
+x4=0;
+x2=0;
+<span class="keyword">for</span> j=2:2:b
+    x4 = x4 + f(x4);
+<span class="keyword">end</span>
+<span class="keyword">for</span> k=3:2:b
+    x2= x2 + f(x2);
+
+<span class="keyword">end</span>
+integral = (h/3)*(f(a)+ f(b) + 4*(x4)+ 2*(x2));
+<span class="keyword">end</span>
+integral = simpsonsrule(@(x) sin(x), 0, pi, 15);
+<span class="comment">% end section</span>
+</pre><h2 id="5">A Power Law for Error in Simpson's method</h2><p>Put MATLAB commands here</p><pre class="codeinput">X = log( numSubintervalsTrap );
+Y = log( errorMagnitudeTrap );
+
+m = ( Y(end) - Y(1) )/(X(end) - X(1) );
+s = sprintf(<span class="string">'the slope of the line in the log-log plot is %f'</span>, m');
+
+figure
+hold <span class="string">on</span>
+scatter(X, Y, 75, <span class="string">'filled'</span>, <span class="string">'blue'</span>)
+grid <span class="string">on</span> <span class="comment">%toggles the major grid lines</span>
+grid <span class="string">minor</span> <span class="comment">%toggles the minor grid lines</span>
+title(s)
+xlabel( <span class="string">'log(number of subintervals)'</span> )
+ylabel( <span class="string">'log(absolute error)'</span> )
+hold <span class="string">off</span>
+<span class="comment">% end section</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Investigation of Error in Numerical Approximations
+%
+%  In order to examine the rate at which numerical approximations of
+%  $\int_0^pi \sin(x)\ dx $ converge to the actual value of the integral,
+%  we are going to generate a scatter plot that shows the relationship
+%  between error and the number of subintervals.
+%
+% * name: 	AYUSH ROUT
+% * email: axr6077@rit.edu
+% * date: 02/12/2018
+%
+% end section 
+
+%% Inititialization
+
+% The first thing we will do is choose the number experiements (trials) to
+% perform.  Each trial will use a different number of subintervals.
+numTrials = 15;
+
+
+% Next we create arrays in which to record the outcomes of the trials.
+% The arrays will be filled with zeros initially.  Those values will be
+% replaced as we perform the experiments.  Each array will have 1 row with
+% numTrials entries.
+
+% In this array we will record the number of subintervals that we use to
+% make an approximation.
+numSubintervalsTrap = zeros(1, numTrials);  % an array filled with zeros
+
+% In this array we will record the magnitude of the error in the
+% approximation.
+errorMagnitudeTrap = zeros(1, numTrials);   % an array filled with zeros
+
+% end section
+
+%% Error Experiment: Trapezoid Rule
+
+% In this section we use the Trapezoid Rule to compute approximations of
+% the integral with different numbers of subintervals.  We record outcomes
+% in the arrays that we prepared above, and then display the results as a
+% scatter plot.
+
+for k = 1:1:numTrials  
+     % The counter k tells us which trial we're conducting.  The number of
+     % subintervals increases by 5 with each new trial
+     n = 5*k;     
+     
+     % Compute the size of each subinterval
+     Dx = pi/n;
+     
+     % Record the partition points at the endpoints of the subintervals
+     x = 0:Dx:pi;
+     
+     % Calculate the function value at the partition points.  Note that f
+     % is an array of numbers because x is an array of numbers.
+     f = sin(x);
+     
+     % Assemble the array of coefficients for the Trapezoid Rule
+     c = ones(1, length(f));
+     c(2:end-1) = 2;
+     
+     % Calculate the Trapezoid Rule approximation
+     T = sum(c.*f)*Dx/2;      
+     
+     % Now we record the results of trial k in position k of our arrays
+     % First, record the number of subintervals
+     numSubintervalsTrap(k) = n;     
+     % Next, record the error in trial k
+     errorMagnitudeTrap(k) = abs(2-T);
+end
+
+% Next we generate a scatter plot that shows the relationship between the
+% number of subintervals, n, and the error in the approximation.
+figure('Color','white')
+hold on
+    scatter( numSubintervalsTrap, errorMagnitudeTrap, 75, 'filled', 'b')
+    
+    title('Number of subintervals and corresponding absolute error')
+    xlabel('Number of subintervals')
+    ylabel('Absolute error')
+    
+    grid on
+    grid minor
+
+hold off
+
+% end section
+
+%% A Power Law for Error in the Trapezoid Rule
+%
+% Put MATLAB commands here
+X = log( numSubintervalsTrap );
+Y = log( errorMagnitudeTrap );
+
+m = ( Y(end) - Y(1) )/(X(end) - X(1) );
+s = sprintf('the slope of the line in the log-log plot is %f', m');
+
+figure
+hold on
+scatter(X, Y, 75, 'filled', 'blue')
+grid on %toggles the major grid lines 
+grid minor %toggles the minor grid lines 
+title(s)
+xlabel( 'log(number of subintervals)' )
+ylabel( 'log(absolute error)' )
+hold off
+% end section
+
+%% Error Experiment: Simpson's method
+%
+% Put MATLAB commands here
+numTrials = 15;
+numSubintervalsSimp = zeros(1, numTrials);
+errorMagnitudeSimp = zeros(1, numTrials);
+
+function integral = simpsonsrule(f,a,b,n)
+h = (b-a)/n;
+x = linspace(a,b,n);
+x4=0;
+x2=0;
+for j=2:2:b
+    x4 = x4 + f(x4);
+end
+for k=3:2:b
+    x2= x2 + f(x2);
+    
+end
+integral = (h/3)*(f(a)+ f(b) + 4*(x4)+ 2*(x2));
+end
+integral = simpsonsrule(@(x) sin(x), 0, pi, 15);
+% end section
+
+%% A Power Law for Error in Simpson's method
+%
+% Put MATLAB commands here
+X = log( numSubintervalsTrap );
+Y = log( errorMagnitudeTrap );
+
+m = ( Y(end) - Y(1) )/(X(end) - X(1) );
+s = sprintf('the slope of the line in the log-log plot is %f', m');
+
+figure
+hold on
+scatter(X, Y, 75, 'filled', 'blue')
+grid on %toggles the major grid lines 
+grid minor %toggles the minor grid lines 
+title(s)
+xlabel( 'log(number of subintervals)' )
+ylabel( 'log(absolute error)' )
+hold off
+% end section
+
+##### SOURCE END #####
+--></body></html>
